@@ -1,0 +1,14 @@
+# React / Node
+node_modules/
+dist/
+.env.local
+
+# Python
+__pycache__/
+.venv/
+*.pyc
+.env
+
+# 通用
+.DS_Store
+.idea/
