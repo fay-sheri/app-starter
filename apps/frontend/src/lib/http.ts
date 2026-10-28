@@ -1,4 +1,8 @@
 import axios from "axios";
+import { queryClient } from './query-client'
+import { router } from './router'
+import { useAuthStore } from '../store/authStore'
+
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true,
@@ -16,6 +20,9 @@ api.interceptors.response.use((response) => {
     console.error('API Error:', error.response.data);
     if (error.response?.status === 401) {
       console.log('Unauthorized access - redirecting to login.');
+      useAuthStore.getState().logout();
+      queryClient.clear();    //清除所有缓存,或许不太好
+      router.navigate('/login', { replace: true });
     }
   } else if (error.request) {
     console.error('No response received:', error.request);

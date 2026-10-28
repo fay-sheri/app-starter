@@ -38,5 +38,3 @@ export const router = createBrowserRouter([ //修改这个后记得修改菜单�
     element: <NotFoundPage />,
   },
 ]);
-
-export const router_path = {}

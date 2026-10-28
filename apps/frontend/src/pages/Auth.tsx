@@ -1,34 +1,42 @@
 import { BasicLayout } from '../layouts/BasicLayout'
 import { Nav } from '../features/Nav/index'
-import { Form, Input, Button, Checkbox } from 'antd'
+import { Form, Input, Button } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 
-import { useQuery } from '@tanstack/react-query'
-import { api } from '../lib/http'
+import { useMutation, } from '@tanstack/react-query'
+import { queryClient } from '../lib/query-client'
 
-interface LoginFormValues {
-  username: string;
-  password: string;
-  remember?: boolean;
-}
+import type { LoginFormValues } from '../api/auth'
+import { loginApi } from '../api/auth'
 
-export function Auth(){
-    const [form] = Form.useForm<LoginFormValues>()
+import { useAuthStore } from '../store/authStore'
 
+export function Auth() {
+  const [form] = Form.useForm<LoginFormValues>()
+  const login = useAuthStore(s => s.login)
+  const loginMutation = useMutation({
+    mutationFn: loginApi,
+    onSuccess: (data) => {
+      login(data.token)
+      queryClient.setQueryData(['user'], data.user)
+    },
+    onError: (err) => {
+      console.error(err)
+    },
+  })
   const onFinish = (values: LoginFormValues) => {
     const payload = {
-    username: values.username,
-    password: values.password,
-    remember: values.remember ?? false, 
-  }
-    console.log('登录:', payload)
-    // loginMutation.mutate(values)
+      username: values.username,
+      password: values.password,
+    }
+    loginMutation.mutate(payload)
   }
 
   const content = (
-    <div className="flex flex-col flex-initial justify-center items-center">
-      <div className="w-120 h-120 bg-amber-200 flex items-center justify-center">
-        <div className="w-80 p-6 bg-white rounded shadow">
+    <div className="flex flex-col flex-auto justify-center items-center bg-blue-400 h-full">
+      <div className="w-120 h-120 flex items-center justify-center
+       bg-white/20 backdrop-blur-md border border-white/30 rounded-xl shadow-xl">
+        <div className="w-80 p-6 bg-white rounded-3xl shadow">
           <h2 className="text-center mb-4">系统登录</h2>
 
           <Form
@@ -52,9 +60,6 @@ export function Auth(){
               <Input.Password prefix={<LockOutlined />} placeholder="密码" />
             </Form.Item>
 
-            {/* <Form.Item name="remember" valuePropName="checked">
-              <Checkbox>记住我</Checkbox>
-            </Form.Item> */}
 
             <Form.Item>
               <Button type="primary" htmlType="submit" block>
@@ -62,6 +67,7 @@ export function Auth(){
               </Button>
             </Form.Item>
           </Form>
+          <p>想要注册？</p>
         </div>
       </div>
     </div>
