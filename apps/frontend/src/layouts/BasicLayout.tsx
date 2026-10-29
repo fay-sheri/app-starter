@@ -19,7 +19,7 @@ export function BasicLayout({
   return (
     <Layout className={` h-screen ${className ?? ''}`}>
       {header !== undefined && <Header>{header}</Header>}
-      <Content className=' flex-1'>{content}</Content>
+      <Content>{content}</Content>
       {footer !== undefined && <Footer>{footer}</Footer>}
     </Layout>
   )
