@@ -1,14 +1,23 @@
+import { useMemo } from "react"
+
 import { Menu } from "antd";
-import { menuitems, getSelectedKey } from "./menuItems";
+import { buildMenuItems, getSelectedKey } from "./menuItems";
 
 import { useNavigate, useLocation } from "react-router-dom";
+
+import { useAuthStore } from "../../store/authStore"
 
 export function Nav() {
   const navigate = useNavigate();
   const location = useLocation();
   const selectedKey = getSelectedKey(location.pathname);
 
-//   console.log('selectedKey:', selectedKey);
+  const isLogin = useAuthStore(s => s.isAuthenticated)
+  const menuitems = useMemo(
+    () => buildMenuItems(isLogin),
+    [isLogin]
+  );
+
 
   return (
     <Menu 
