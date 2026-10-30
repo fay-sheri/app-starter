@@ -71,6 +71,23 @@ async def generic_exception_handler(request: Request, exc: Exception):
         }
     )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# 真正在数据库里建表的代码！
+Base.metadata.create_all(bind=engine)
+
+# ==========================================
+# 把认证路由挂载到主程序上！
+# 这行代码一加，/docs 里就会多出“认证”模块
+# ==========================================
+app.include_router(auth.router)
+
 @app.get("/")
 async def root():
     return {"message": "App Starter Backend is running"}
