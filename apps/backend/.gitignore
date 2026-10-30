@@ -1,2 +1,4 @@
 .env
 .vscode/
+.check_bcrypt.py
+.app.db
