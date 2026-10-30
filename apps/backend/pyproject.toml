@@ -1,12 +1,17 @@
 [project]
 name = "backend"
 version = "0.1.0"
-requires-python = ">=3.14"
+requires-python = ">=3.14,<3.15"
 dependencies = [
     "bcrypt==4.0.1",
+    "email-validator>=2.3.0",
     "fastapi[standard]>=0.162.0",
     "passlib[bcrypt]>=1.7.4",
     "pydantic-settings>=2.16.2",
+    "pydantic[email]>=2.14.1",
     "python-jose[cryptography]>=3.5.0",
+    "sqlalchemy>=2.1.6",
     "uvicorn[standard]>=0.54.0",
 ]
+[tool.pylint.main]
+init-hook = "import sys; sys.path.append('.')"
