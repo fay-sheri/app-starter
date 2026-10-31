@@ -1,4 +1,7 @@
 import { api } from '../lib/http'
+import { encryptPassword } from "../utils/rsa"
+
+const AuthPublicKeyPem = import.meta.env.VITE_AUTH_PUBLIC_KEY_PEM;
 
 interface LoginResponse {
     token: string
@@ -10,7 +13,11 @@ export interface LoginFormValues {
 }
 
 export async function loginApi(data: LoginFormValues) {
-    const res = await api.post<LoginResponse>("api/login", data)
+    const playload = {
+        ...data,
+        password: await encryptPassword(data.password,AuthPublicKeyPem)
+    }
+    const res = await api.post<LoginResponse>("api/login", playload)
     return res.data
 }
 
@@ -23,6 +30,10 @@ export interface RegisterFormValues {
 }
 
 export async function registerApi(data: RegisterFormValues) {
-    const res = await api.post<RegisterResponse>("api/register", data)
+    const playload = {
+        ...data,
+        password: await encryptPassword(data.password,AuthPublicKeyPem)
+    }
+    const res = await api.post<RegisterResponse>("api/register", playload)
     return res.data
 }
