@@ -1,0 +1,484 @@
+openapi: 3.0.1
+info:
+  title: 默认模块
+  description: ''
+  version: 1.0.0
+tags: []
+paths:
+  /api/login:
+    post:
+      summary: 单token登录
+      deprecated: false
+      description: ''
+      tags: []
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+            example:
+              username: '{{$person.firstName}}'
+              password: '{{rsa_password}}'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                      userInfo:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          username:
+                            type: string
+                        required:
+                          - id
+                          - username
+                    required:
+                      - token
+                      - userInfo
+                required:
+                  - code
+                  - message
+                  - data
+              example:
+                code: 200
+                message: 登录成功
+                data:
+                  token: eyJhbGciOiJIUzI1NiIs...
+                  userInfo:
+                    id: 1
+                    username: admin
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: 'null'
+                required:
+                  - code
+                  - message
+                  - data
+              example:
+                code: 400
+                message: 参数缺失或格式错误
+                data: null
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: 'null'
+                required:
+                  - code
+                  - message
+                  - data
+              example:
+                code: 40101
+                message: 账号或密码错误
+                data: null
+          headers: {}
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: 'null'
+                required:
+                  - code
+                  - message
+                  - data
+              example:
+                code: 42201
+                message: 密码加密参数异常
+                data: null
+          headers: {}
+        '429':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: 'null'
+                required:
+                  - code
+                  - message
+                  - data
+              example:
+                code: 42901
+                message: 尝试过于频繁，请稍后再试
+                data: null
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: 'null'
+                required:
+                  - code
+                  - message
+                  - data
+              example:
+                code: 500
+                message: 系统繁忙，请稍后重试
+                data: null
+          headers: {}
+      security: []
+  /api/register:
+    post:
+      summary: 单token注册
+      deprecated: false
+      description: ''
+      tags: []
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+            example:
+              username: admin
+              password: '{{rsa_password}}'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      userId:
+                        type: integer
+                      username:
+                        type: string
+                    required:
+                      - userId
+                      - username
+                required:
+                  - code
+                  - message
+                  - data
+              example:
+                code: 200
+                message: 注册成功
+                data:
+                  userId: 1
+                  username: admin
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: 'null'
+                required:
+                  - code
+                  - message
+                  - data
+              example:
+                code: 400
+                message: 参数缺失或格式错误
+                data: null
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: 'null'
+                required:
+                  - code
+                  - message
+                  - data
+              example:
+                code: 40101
+                message: 账号或密码错误
+                data: null
+          headers: {}
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: 'null'
+                required:
+                  - code
+                  - message
+                  - data
+              example:
+                code: 42201
+                message: 密码加密参数异常
+                data: null
+          headers: {}
+        '429':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: 'null'
+                required:
+                  - code
+                  - message
+                  - data
+              example:
+                code: 42901
+                message: 尝试过于频繁，请稍后再试
+                data: null
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: 'null'
+                required:
+                  - code
+                  - message
+                  - data
+              example:
+                code: 500
+                message: 系统繁忙，请稍后重试
+                data: null
+          headers: {}
+      security: []
+components:
+  schemas: {}
+  responses:
+    请求频繁:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              data:
+                type: 'null'
+            required:
+              - code
+              - message
+              - data
+          examples:
+            示例 1:
+              summary: 示例 1
+              value:
+                code: 42901
+                message: 尝试过于频繁，请稍后再试
+                data: null
+    服务器问题:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              data:
+                type: 'null'
+            required:
+              - code
+              - message
+              - data
+          examples:
+            示例 1:
+              summary: 示例 1
+              value:
+                code: 500
+                message: 系统繁忙，请稍后重试
+                data: null
+    请求有误:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              data:
+                type: 'null'
+            required:
+              - code
+              - message
+              - data
+          examples:
+            示例 1:
+              summary: 示例 1
+              value:
+                code: 400
+                message: 参数缺失或格式错误
+                data: null
+    账号或者密码错:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              data:
+                type: 'null'
+            required:
+              - code
+              - message
+              - data
+          examples:
+            示例 1:
+              summary: 示例 1
+              value:
+                code: 40101
+                message: 账号或密码错误
+                data: null
+    解密失败:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              data:
+                type: 'null'
+            required:
+              - code
+              - message
+              - data
+          examples:
+            示例 1:
+              summary: 示例 1
+              value:
+                code: 42201
+                message: 密码加密参数异常
+                data: null
+  securitySchemes:
+    单token鉴权:
+      type: http
+      scheme: bearer
+servers:
+  - url: http://dev-cn.your-api-server.com
+    description: 开发环境
+security: []
