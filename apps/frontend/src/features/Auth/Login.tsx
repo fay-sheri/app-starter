@@ -25,8 +25,8 @@ export function Login({setRegisterMode}: props){
       const loginMutation = useMutation({
         mutationFn: loginApi,
         onSuccess: (data) => {
-          login(data.token)
-          queryClient.setQueryData(['user'], data.user)
+          login(data.data.token)
+          queryClient.setQueryData(['user'], data.data.userInfo)
           navigate('/');
         },
         onError: (err) => {

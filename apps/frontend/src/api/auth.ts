@@ -3,9 +3,18 @@ import { encryptPassword } from "../utils/rsa"
 
 const AuthPublicKeyPem = import.meta.env.VITE_AUTH_PUBLIC_KEY_PEM;
 
+interface LoginData {
+    token: string;
+    userInfo: UserInfo;
+}
+interface UserInfo {
+    id: number;
+    username: string;
+}
 interface LoginResponse {
-    token: string
-    user: string
+    code: number;
+    data: LoginData;
+    message: string;
 }
 export interface LoginFormValues {
     username: string;
@@ -21,8 +30,15 @@ export async function loginApi(data: LoginFormValues) {
     return res.data
 }
 
+interface RegisterData {
+    userId: number;
+    username: string;
+}
+
 interface RegisterResponse {
-    user: string
+    code: number;
+    data: RegisterData;
+    message: string;
 }
 export interface RegisterFormValues {
     username: string;
