@@ -26,7 +26,7 @@ export async function loginApi(data: LoginFormValues) {
         ...data,
         password: await encryptPassword(data.password,AuthPublicKeyPem)
     }
-    const res = await api.post<LoginResponse>("api/login", playload)
+    const res = await api.post<LoginResponse>("api/auth/login", playload)
     return res.data
 }
 
@@ -50,6 +50,6 @@ export async function registerApi(data: RegisterFormValues) {
         ...data,
         password: await encryptPassword(data.password,AuthPublicKeyPem)
     }
-    const res = await api.post<RegisterResponse>("api/register", playload)
+    const res = await api.post<RegisterResponse>("api/auth/register", playload)
     return res.data
 }
