@@ -13,6 +13,7 @@ __pycache__/
 .env
 *.db
 .vscode/
+.check_bcrypt.py
 
 # 通用
 .DS_Store
