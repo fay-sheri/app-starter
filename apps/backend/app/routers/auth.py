@@ -32,8 +32,8 @@ class LoginRequest(BaseModel):
     password: str
 
 @router.post("/register")
-def register(user_in: UserCreate, db: Session = Depends(get_db)):
-    user_exists = db.query(User).filter(User.username == user_in.username).first()
+def register(request: Register_WithoutEmail, db: Session = Depends(get_db)):
+    user_exists = db.query(User).filter(User.username == request.username).first()
     if user_exists:
         raise HTTPException(status_code=400, detail="用户名已被注册")
 >>>>>>> c6d9d31 (status_code-response rsa_encrypt)
@@ -129,9 +129,9 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
             "message": "账号或密码错误",
             "data": None
         }
-    if not verify_password(request.password, user.hashed_password):
+    if not verify_password(decrypt_password(request.password), user.hashed_password):
         return  {
-            "code": 400,
+            "code": 422,
             "message": "参数缺失或格式错误",
             "data": None
         }
