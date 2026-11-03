@@ -11,7 +11,6 @@ import re
 from app.core.config import settings
 
 
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # ========================1.哈希加密(数据库)===============================
