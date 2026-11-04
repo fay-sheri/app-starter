@@ -7,7 +7,7 @@ import { useState } from "react";
 export function Auth() {
   const [registerMode, setRegisterMode] = useState(false);
   const content = (
-    <div className="flex flex-col flex-auto justify-center items-center bg-blue-400 h-full">
+    <div className="flex flex-col flex-auto justify-center items-center  h-full">
       {registerMode ? <Register setRegisterMode={setRegisterMode}/> : <Login setRegisterMode={setRegisterMode}/>}
     </div>
   );

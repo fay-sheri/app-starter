@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 tags: []
 paths:
-  /api/login:
+  /api/auth/login:
     post:
       summary: 单token登录
       deprecated: false
@@ -183,7 +183,7 @@ paths:
                 data: null
           headers: {}
       security: []
-  /api/register:
+  /api/auth/register:
     post:
       summary: 单token注册
       deprecated: false
