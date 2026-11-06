@@ -1,20 +1,20 @@
-import { Button, Input, Empty } from 'antd'
-import { BasicLayout } from '../layouts/BasicLayout'
-import { Nav } from '../features/Nav'
+import { Button, Input, Empty } from "antd";
+import { BasicLayout } from "../layouts/BasicLayout";
+import { Nav } from "../features/Nav";
 
 const mockWorks = Array.from({ length: 8 }, (_, i) => ({
   id: i + 1,
   title: `作品 ${i + 1}ssssssssssssssssssssssssssssssssssssssdddddddd`,
-  cover: '',
-  author: '测试用户',
-}))
+  cover: "",
+  author: "测试用户",
+}));
 
 export function Home() {
   const header = (
     <div className="px-6">
       <Nav />
     </div>
-  )
+  );
 
   const content = (
     <div className="mx-auto max-w-7xl px-4 py-8">
@@ -37,7 +37,7 @@ export function Home() {
         <Empty className="py-20" />
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {mockWorks.map(w => (
+          {mockWorks.map((w) => (
             <div
               key={w.id}
               className="cursor-pointer overflow-hidden rounded-lg border hover:shadow-md transition"
@@ -52,7 +52,7 @@ export function Home() {
         </div>
       )}
     </div>
-  )
+  );
 
-  return <BasicLayout header={header} content={content} />
+  return <BasicLayout header={header} content={content} />;
 }

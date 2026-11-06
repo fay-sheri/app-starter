@@ -1,7 +1,7 @@
-import { Modal, Form, Input } from 'antd'
+import { Modal, Form, Input } from "antd";
 
 export function EditModal({ open, initial, onClose, onSubmit }) {
-  const [form] = Form.useForm()
+  const [form] = Form.useForm();
   return (
     <Modal
       open={open}
@@ -25,5 +25,5 @@ export function EditModal({ open, initial, onClose, onSubmit }) {
         </Form.Item>
       </Form>
     </Modal>
-  )
+  );
 }

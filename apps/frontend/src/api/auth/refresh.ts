@@ -17,8 +17,10 @@ interface RefreshResponse {
 async function doRefresh(): Promise<string> {
   const res = await refreshClient.post<RefreshResponse>("/auth/refresh");
   const token = res.data.data.accesstoken;
-  useAuthStore.getState().setToken(token);    // 设置token
+  useAuthStore.getState().setToken(token); // 设置token
   return token;
 }
 
-export const refresh = createSingleFlight(doRefresh, {onReject: onSessionDead});
+export const refresh = createSingleFlight(doRefresh, {
+  onReject: onSessionDead,
+});
