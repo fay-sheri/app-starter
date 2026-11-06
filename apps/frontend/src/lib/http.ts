@@ -1,4 +1,5 @@
 import axios from "axios";
+import type { AxiosError } from "axios";
 import { queryClient } from './query-client'
 import { router } from './router'
 import { useAuthStore } from '../store/authStore'
@@ -15,14 +16,14 @@ api.interceptors.request.use(config => {
 api.interceptors.response.use((response) => {
   // return response.data; //一定要注意拦截器解包导致ts类型不能正确推断，ts还认为是参数response的类型
   return response;  //不解包了
-}, (error) => {
+}, (error: AxiosError) => {
   if (error.response) {
     console.error('API Error:', error.response.data);
-    if (error.response?.status === 401) {
+    if (error.response.status === 401) {
       console.log('Unauthorized access - redirecting to login.');
       useAuthStore.getState().logout();
       queryClient.clear();    //清除所有缓存,或许不太好
-      router.navigate('/login', { replace: true });
+      router.navigate('/auth', { replace: true });
     }
   } else if (error.request) {
     console.error('No response received:', error.request);
