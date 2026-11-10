@@ -19,7 +19,7 @@ export function signAccessToken(
 ): string {
   return jwt.sign({ sub: String(userId), username }, SECRET!, {
     algorithm: "HS256",
-    expiresIn: "2h" as Expiry,
+    expiresIn: "5s" as Expiry,
   });
 }
 

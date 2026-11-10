@@ -14,8 +14,19 @@ export function errorHandler(): Koa.Middleware {
       }
 
       if (err instanceof AppError) {
+        if (err.statusCode >= 500) {
+          console.error(err.message, err?.details);
+          ctx.status = 500;
+          ctx.body = {
+            code: "500",
+            message: "服务器内部错误",
+            data: null,
+          };
+          return;
+        }
         ctx.status = err.statusCode;
         ctx.body = { code: err.code, message: err.message, data: null };
+        console.error(err.message, err?.details);
         return;
       }
 

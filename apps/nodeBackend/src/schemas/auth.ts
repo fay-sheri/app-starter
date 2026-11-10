@@ -6,3 +6,10 @@ export const LoginSchema = z.object({
 })
 
 export type LoginInput = z.infer<typeof LoginSchema>
+
+export const RegisterSchema = z.object({
+  username: z.string(),
+  password: z.string(),
+})
+
+export type RegisterInput = z.infer<typeof RegisterSchema>
