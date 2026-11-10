@@ -3,16 +3,10 @@ import Koa from "koa";
 import { routers } from "./routes/index.js";
 import bodyParser from "@koa/bodyparser";
 import cors from '@koa/cors'
+import { errorHandler } from "./middlewares/error.js";
 
 const app = new Koa();
-app.use(async (ctx, next) => {
-  try {
-    await next();
-  } catch (e) {
-    ctx.status = (e as any).status || 500;
-    ctx.body = { error: (e as Error).message };
-  }
-});
+app.use(errorHandler());
 app.use(cors({
   origin: 'http://localhost:5173',
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

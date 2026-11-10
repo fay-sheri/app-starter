@@ -1,5 +1,6 @@
 import { Pool } from "pg";
 
+
 const connectionString = process.env.DATABASE_URL;
 
 export const pool = new Pool(
@@ -17,3 +18,8 @@ export const pool = new Pool(
 pool.on('error', (err) => {
   console.error('idle pg client error', err)
 })
+
+// process.on('SIGTERM', async () => {
+//   await pool.end()   // 优雅关：等借出的还回来再断
+//   process.exit(0)
+// })
