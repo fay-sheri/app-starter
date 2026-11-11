@@ -121,14 +121,19 @@ async def login(request: LoginRequest, db: AsyncSession = Depends(get_db)):
 =======
 def login(request: LoginRequest, db: Session = Depends(get_db)):
 
-    user = db.query(User).filter(User.username == request.username).first()
+    result = await db.execute(select(User).where(User.username == request.username))
+    user = result.scalars().first()
     
     if not user :
-        return{
-            "code": 401,
-            "message": "账号或密码错误",
-            "data": None
-        }
+        return JSONResponse(
+            status_code=401,
+            content={
+                "code": 401,
+                "message": "账号或密码错误",
+                "data": None
+            }
+        )
+    
     if not verify_password(decrypt_password(request.password), user.hashed_password):
         return  {
             "code": 422,

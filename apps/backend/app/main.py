@@ -89,9 +89,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 真正在数据库里建表的代码！
-Base.metadata.create_all(bind=engine)
-
 # ==========================================
 # 把认证路由挂载到主程序上！
 # 这行代码一加，/docs 里就会多出“认证”模块
@@ -101,6 +98,7 @@ app.include_router(auth.router)
 # 处理 HTTPException (如 400, 401)
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
+    traceback.print_exc()       #开发时使用
     return JSONResponse(
         status_code=exc.status_code,
         content={
@@ -108,7 +106,7 @@ async def http_exception_handler(request: Request, exc: HTTPException):
             "message": exc.detail,
         }
     )
-    
+
 # 处理 422 参数校验失败 (如 Pydantic 拦截的格式错误)
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
