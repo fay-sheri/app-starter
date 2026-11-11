@@ -22,7 +22,7 @@ api.interceptors.response.use((response) => {
       console.log('Unauthorized access - redirecting to login.');
       useAuthStore.getState().logout();
       queryClient.clear();    //清除所有缓存,或许不太好
-      router.navigate('/login', { replace: true });
+      router.navigate('/auth', { replace: true });
     }
   } else if (error.request) {
     console.error('No response received:', error.request);
