@@ -1,23 +1,23 @@
-import { Form, Input, Button, Typography, App } from 'antd'
-import { UserOutlined, LockOutlined } from '@ant-design/icons'
-const { Link } = Typography
+import { Form, Input, Button, Typography, App } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+const { Link } = Typography;
 
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "../../lib/query-client";
 
-import type { LoginFormValues } from "../../api/auth";
-import { registerApi, loginApi } from "../../api/auth";
+import type { LoginFormValues } from "../../api/auth/auth";
+import { registerApi, loginApi } from "../../api/auth/auth";
 
 import { useAuthStore } from "../../store/authStore";
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
-import type { Dispatch, SetStateAction } from 'react'
+import type { Dispatch, SetStateAction } from "react";
 interface props {
-    setRegisterMode: Dispatch<SetStateAction<boolean>>
+  setRegisterMode: Dispatch<SetStateAction<boolean>>;
 }
 
-export function Register({setRegisterMode}: props) {
+export function Register({ setRegisterMode }: props) {
   const { message } = App.useApp();
   const navigate = useNavigate();
   const [form] = Form.useForm<LoginFormValues>();
@@ -27,7 +27,7 @@ export function Register({setRegisterMode}: props) {
     onSuccess: (data) => {
       login(data.data.token);
       queryClient.setQueryData(["user"], data.data.userInfo);
-      navigate('/');
+      navigate("/");
     },
     onError: (err) => {
       console.error(err);
@@ -80,13 +80,23 @@ export function Register({setRegisterMode}: props) {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block loading={loginMutation.isPending} disabled={loginMutation.isPending}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              loading={loginMutation.isPending}
+              disabled={loginMutation.isPending}
+            >
               注册
             </Button>
           </Form.Item>
         </Form>
-        <Link className="block text-center mt-2"
-          onClick={() => setRegisterMode(false)}>想要登录？</Link>
+        <Link
+          className="block text-center mt-2"
+          onClick={() => setRegisterMode(false)}
+        >
+          想要登录？
+        </Link>
       </div>
     </div>
   );

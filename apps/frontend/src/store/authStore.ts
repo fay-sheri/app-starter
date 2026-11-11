@@ -1,21 +1,26 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   login: (token: string) => void;
+  setToken: (token: string) => void;
   logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  token: localStorage.getItem('token'),
-  isAuthenticated: !!localStorage.getItem('token'),
+  token: localStorage.getItem("token"),
+  isAuthenticated: !!localStorage.getItem("token"),
   login: (token: string) => {
-    localStorage.setItem('token', token);
+    localStorage.setItem("token", token);
+    set({ token, isAuthenticated: true });
+  },
+  setToken: (token: string) => {
+    localStorage.setItem("token", token);
     set({ token, isAuthenticated: true });
   },
   logout: () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     set({ token: null, isAuthenticated: false });
-  },      //这个并不能清除服务器状态缓存
+  }, //这个并不能清除服务器状态缓存
 }));
