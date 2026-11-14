@@ -1,8 +1,12 @@
 import type { MenuProps } from "antd";
-import { UserOutlined, HomeFilled, IdcardOutlined, ProfileOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  HomeFilled,
+  IdcardOutlined,
+  ProfileOutlined,
+} from "@ant-design/icons";
 
 type MenuItem = Required<MenuProps>["items"][number];
-
 
 export function buildMenuItems(isLogin: boolean): MenuItem[] {
   const items: MenuItem[] = [

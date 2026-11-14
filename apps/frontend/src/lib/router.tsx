@@ -6,6 +6,7 @@ import { ProtectedRoute } from "../features/Auth/ProtectedRoute";
 import { Home } from "../pages/Home";
 import { User } from "../pages/User";
 import { Auth } from "../pages/Auth";
+import { Profile } from "../pages/Profile";
 
 export const router = createBrowserRouter([
   //修改这个后记得修改菜单配置"apps/frontend/src/features/Nav/menuItems.tsx"
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
       {
         path: "user",
         element: <User></User>,
+      },
+      {
+        path: "profile",
+        element: <Profile></Profile>,
       },
       // {
       //   path: "users/:id",
