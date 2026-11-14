@@ -1,6 +1,7 @@
 import { api } from "../../lib/http";
 import { encryptPassword } from "../../utils/rsa";
 
+
 const AuthPublicKeyPem = import.meta.env.VITE_AUTH_PUBLIC_KEY_PEM;
 
 interface LoginData {
@@ -52,4 +53,15 @@ export async function registerApi(data: RegisterFormValues) {
   };
   const res = await api.post<RegisterResponse>("api/auth/register", playload);
   return res.data;
+}
+
+interface LogoutResponse{
+  code: number;
+  data: null;
+  message: string;
+}
+
+export async function logout() {
+  const res = await api.post<LogoutResponse>("api/auth/logout")
+  return res
 }
