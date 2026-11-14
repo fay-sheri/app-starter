@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from app.core.database import get_db
 from app.core.security import hash_password, verify_password, create_access_token,decrypt_password,is_frontend_rsa_oaep_encrypted
@@ -15,22 +17,29 @@ router = APIRouter(
 
 
 @router.post("/register")
-def register(request: Register_WithoutEmail, db: Session = Depends(get_db)):
-    user_exists = db.query(User).filter(User.username == request.username).first()
-    if user_exists:
-        return{
-            "code": 400,
-            "message": "该用户名已被注册",
-            "data": None
-        }
+async def register(request: Register_WithoutEmail, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User).where(User.username == request.username))
+    user_exist = result.scalars().first()
+    if user_exist:
+        return JSONResponse(
+            status_code=400,
+            content={
+                "code": 400,
+                "message": "该用户名已被注册",
+                "data": None
+            }
+        )
 
-    user_password_verify = is_frontend_rsa_oaep_encrypted(request.password)
-    if not user_password_verify:
-        return{
-            "code": 422,
-            "message": "密码加密参数异常",
-            "data": None
-        }
+    # user_password_verify = is_frontend_rsa_oaep_encrypted(request.password)
+    # if not user_password_verify:
+    #     return JSONResponse(
+    #         status_code=422,
+    #         content={
+    #             "code": 422,
+    #             "message": "密码加密参数异常",
+    #             "data": None
+    #         }
+    #     )
 #     email_exists = db.query(User).filter(User.email == request.email).first()
 #     if email_exists:
 #         raise HTTPException(status_code=400, detail="邮箱已被注册")
@@ -43,8 +52,8 @@ def register(request: Register_WithoutEmail, db: Session = Depends(get_db)):
     )
     
     db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    await db.commit()
+    await db.refresh(new_user)
 
     return {
         "code": 200,
@@ -56,22 +65,30 @@ def register(request: Register_WithoutEmail, db: Session = Depends(get_db)):
     }
 
 @router.post("/login")
-def login(request: LoginRequest, db: Session = Depends(get_db)):
+async def login(request: LoginRequest, db: AsyncSession = Depends(get_db)):
 
-    user = db.query(User).filter(User.username == request.username).first()
+    result = await db.execute(select(User).where(User.username == request.username))
+    user = result.scalars().first()
     
     if not user :
-        return{
-            "code": 401,
-            "message": "账号或密码错误",
-            "data": None
-        }
+        return JSONResponse(
+            status_code=401,
+            content={
+                "code": 401,
+                "message": "账号或密码错误",
+                "data": None
+            }
+        )
+    
     if not verify_password(decrypt_password(request.password), user.hashed_password):
-        return  {
-            "code": 422,
-            "message": "参数缺失或格式错误",
-            "data": None
-        }
+        return JSONResponse(
+            status_code=422,
+            content={
+                "code": 422,
+                "message": "参数缺失或格式错误",
+                "data": None
+            }
+        )
     # 删掉了报错的 timedelta 行，直接生成 token
     access_token = create_access_token(
         subject=str(user.id),
