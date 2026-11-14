@@ -12,7 +12,7 @@ export interface User {
   id: number;
   username: string;
   password_hash: string;
-  created_at: Date; //PG自动把TIMESTAMPTZ转成JS的Date对象
+  created_at: Date; //PG库自动把TIMESTAMPTZ转成JS的Date对象
 }
 
 //Omit排除对象字段类型
@@ -38,7 +38,7 @@ export async function findUserByUsername(
   return rows[0] || null; //rows[0]可能是undefined
 }
 
-async function findUserById(
+export async function findUserById(
   id: number,
 ): Promise<Omit<User, "password_hash"> | null> {
   const { rows } = await pool.query(
