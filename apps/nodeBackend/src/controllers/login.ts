@@ -14,6 +14,13 @@ export async function login(ctx: Context, next: Next) {
     );
   }
   const result = await authService.login(parsed.data);
+  ctx.cookies.set('refresh_token', result.refreshToken, {
+    httpOnly: true,                                   // JS 读不到，防 XSS
+    secure: process.env.NODE_ENV === 'production',    // 生产只走 HTTPS
+    sameSite: 'lax',                                  // 防 CSRF（跨站 POST 不带）
+    path: '/api/auth',                        // 只给部分接口用
+    maxAge: 7 * 24 * 60 * 60 * 1000,                  // 7 天（毫秒）
+  });
   ctx.body = {
       code: 200,
       message: "登录成功",
