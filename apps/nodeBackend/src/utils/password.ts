@@ -1,4 +1,5 @@
 import argon2 from "argon2";
+//内存密集型哈希（要占大量内存+时间）需要异步
 
 export async function hashPassword(password: string): Promise<string> {
   // 默认就是 argon2id，自动造 16 字节随机 salt

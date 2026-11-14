@@ -2,17 +2,12 @@ import { Pool } from "pg";
 
 
 const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error("DATABASE_URL 没配");
+}
 
 export const pool = new Pool(
-  connectionString
-    ? { connectionString }
-    : {
-        host: process.env.DB_HOST,
-        port: Number(process.env.DB_PORT),
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-      },
+  {connectionString}
 );
 
 pool.on('error', (err) => {
