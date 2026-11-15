@@ -1,8 +1,11 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr
 
 class Register_WithoutEmail(BaseModel):
     username: str
     password: str
+
+class TokenRequest(BaseModel):
+    refresh_token: str
 
 class LoginRequest(BaseModel):
     username: str
