@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
@@ -70,7 +72,7 @@ def decode_token(token: str) -> dict:
 # ====================== 4. 是否RSA-OAEP(SHA-256)加密 ========================
 _B64_RE = re.compile(r'^[A-Za-z0-9+/]+={0,2}$')
 
-def is_frontend_rsa_oaep_encrypted(password_field: str, private_key_pem: bytes = settings.RSA_PRIVATE_KEY, expected_plaintext_checker=None) -> bool:
+def is_frontend_rsa_oaep_encrypted(password_field: str, private_key_pem: bytes | str = settings.RSA_PRIVATE_KEY, expected_plaintext_checker: Callable[[bytes],bool] | None = None) -> bool:
     """
     检测前端传来的 password 字段是否为
     RSA-OAEP(SHA-256) 加密结果（对应前端 crypto.subtle.encrypt({name:'RSA-OAEP'}, ...)）。
