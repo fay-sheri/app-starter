@@ -1,12 +1,9 @@
-import { Button, Avatar, Tabs, Tag, Empty, Space } from "antd";
+import { Button, Avatar, Tabs, Tag, Empty } from "antd";
 import { useState } from "react";
 import { EditModal } from "./EditModal";
 
-import { logout } from "../../api/auth/auth";
-import { useAuthStore } from "../../store/authStore"
-import { queryClient } from "../../lib/query-client"
-import { router } from "../../lib/router"
- 
+import { logout } from "../Auth/logout"
+
 // 先用假数据把结构立起来
 const me = {
   name: "小林",
@@ -81,24 +78,20 @@ export function Profile() {
                   {me.handle} · {me.role}
                 </p>
               </div>
-              <Space>
+              <div className="flex items-center gap-2">
                 <Button type="primary" onClick={() => setEditModalOpen(true)}>
                   编辑资料
                 </Button>
                 <Button
                   danger
                   onClick={async () => {
-                    await logout();
-                    useAuthStore.getState().logout();
-                    queryClient.clear();
-                    router.navigate("/auth", { replace: true });
+                    logout();
                   }}
                 >
                   退出登录
                 </Button>
-              </Space>
+              </div>
             </div>
-
             <p className="mt-3 text-sm text-gray-600">{me.bio}</p>
 
             {/* 统计 */}
