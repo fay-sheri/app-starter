@@ -99,6 +99,8 @@ def is_frontend_rsa_oaep_encrypted(password_field: str, private_key_pem: bytes =
 
     # 2) 加载私钥
     try:
+        if isinstance(private_key_pem, str):
+            private_key_pem = private_key_pem.encode("utf-8")
         private_key = serialization.load_pem_private_key(private_key_pem, password=None)
     except Exception:
         return False
