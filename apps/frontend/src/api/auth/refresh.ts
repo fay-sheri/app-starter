@@ -15,7 +15,7 @@ interface RefreshResponse {
 }
 
 async function doRefresh(): Promise<string> {
-  const res = await refreshClient.post<RefreshResponse>("/auth/refresh");
+  const res = await refreshClient.post<RefreshResponse>("/api/auth/refresh");
   const token = res.data.data.accesstoken;
   useAuthStore.getState().setToken(token); // 设置token
   return token;
