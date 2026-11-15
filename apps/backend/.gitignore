@@ -4,4 +4,8 @@ __pycache__/
 .env
 *.db
 .vscode/
+<<<<<<< HEAD
 .check_bcrypt.py
+=======
+.check_bcrypt.py
+>>>>>>> c6d9d31 (status_code-response rsa_encrypt)
