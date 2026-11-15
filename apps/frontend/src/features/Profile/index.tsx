@@ -1,8 +1,8 @@
-import { Button, Avatar, Tabs, Tag, Empty } from "antd";
+import { Button, Avatar, Tabs, Tag, Empty, Modal } from "antd";
 import { useState } from "react";
 import { EditModal } from "./EditModal";
 
-import { logout } from "../Auth/logout"
+import { logout } from "../Auth/logout";
 
 // 先用假数据把结构立起来
 const me = {
@@ -53,6 +53,10 @@ export function Profile() {
     },
   ];
   const [editModalOpen, setEditModalOpen] = useState(false);
+  // const { data: me, isLoading } = useQuery({
+  //   queryKey: ["me"],
+  //   queryFn: () => api.get("/auth/me").then((res) => res.data),
+  // });
   return (
     <>
       <EditModal
@@ -84,8 +88,13 @@ export function Profile() {
                 </Button>
                 <Button
                   danger
-                  onClick={async () => {
-                    logout();
+                  onClick={() => {
+                    Modal.confirm({
+                      title: "确认退出登录？",
+                      onOk: async () => {
+                        await logout();
+                      },
+                    });
                   }}
                 >
                   退出登录
