@@ -1,4 +1,5 @@
 import { api } from "../../lib/http";
+import { withAuthRetry } from "../auth/withAuthRetry"
 
 interface UserProfile {
   id: number;
@@ -25,11 +26,11 @@ export type UsersMeFormValues = PatchProfilePayload
 
 
 export async function getUsersMeApi() {
-    const res = await api.get<UsersMeResponse>("api/users/me");
+    const res = await withAuthRetry(() => api.get<UsersMeResponse>("api/users/me"));
     return res.data.data
 }
 
 export async function patchUsersMeApi(data: PatchProfilePayload) {
-    const res = await api.patch<UsersMeResponse>("api/users/me", data);
+    const res = await withAuthRetry(() => api.patch<UsersMeResponse>("api/users/me", data));
     return res.data.data
 }
