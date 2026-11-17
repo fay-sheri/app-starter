@@ -5,8 +5,8 @@ const { Link } = Typography;
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "../../lib/query-client";
 
-import type { LoginFormValues } from "../../api/auth/auth";
-import { registerApi, loginApi } from "../../api/auth/auth";
+import type { LoginFormValues } from "../../api/auth/index";
+import { registerApi, loginApi } from "../../api/auth/index";
 
 import { useAuthStore } from "../../store/authStore";
 

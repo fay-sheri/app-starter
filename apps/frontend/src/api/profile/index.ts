@@ -1,5 +1,5 @@
 import { api } from "../../lib/http";
-import { withAuthRetry } from "../auth/withAuthRetry"
+import { withAuthRetry } from "../auth/index"
 
 interface UserProfile {
   id: number;
