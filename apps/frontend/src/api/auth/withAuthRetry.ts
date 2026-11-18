@@ -3,6 +3,7 @@ import { refresh } from "./refresh";
 import { TokenExpiredError } from "../../Error/auth/AuthError";
 import type { InternalAxiosRequestConfig } from "axios";
 
+//401重试包装
 export async function withAuthRetry<T>(fn: () => Promise<T>): Promise<T> {
   try {
     return await fn();
