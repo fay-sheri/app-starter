@@ -1,3 +1,8 @@
+from collections.abc import Callable
+
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+
 from datetime import datetime, timedelta, timezone
 import base64
 
@@ -49,10 +54,15 @@ def create_access_token(subject: str, expires_minutes: int | None = None) -> str
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=expires_minutes or settings.ACCESS_TOKEN_EXPIRE_MINUTES
     )
-    payload = {"sub": subject, "exp": expire}
+    payload = {"sub": subject, "exp": expire, "type": "access"}
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
-def decode_access_token(token: str) -> dict:
+def create_refresh_token(subject: str) -> str:
+    expire = datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    payload = {"sub": subject, "exp": expire, "type": "refresh"}
+    return jwt.encode(payload,settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
+def decode_token(token: str) -> dict:
     try:
         return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
     except JWTError as exc:
@@ -62,7 +72,7 @@ def decode_access_token(token: str) -> dict:
 # ====================== 4. 是否RSA-OAEP(SHA-256)加密 ========================
 _B64_RE = re.compile(r'^[A-Za-z0-9+/]+={0,2}$')
 
-def is_frontend_rsa_oaep_encrypted(password_field: str, private_key_pem: bytes = settings.RSA_PRIVATE_KEY, expected_plaintext_checker=None) -> bool:
+def is_frontend_rsa_oaep_encrypted(password_field: str, private_key_pem: bytes | str = settings.RSA_PRIVATE_KEY, expected_plaintext_checker: Callable[[bytes],bool] | None = None) -> bool:
     """
     检测前端传来的 password 字段是否为
     RSA-OAEP(SHA-256) 加密结果（对应前端 crypto.subtle.encrypt({name:'RSA-OAEP'}, ...)）。
@@ -91,6 +101,8 @@ def is_frontend_rsa_oaep_encrypted(password_field: str, private_key_pem: bytes =
 
     # 2) 加载私钥
     try:
+        if isinstance(private_key_pem, str):
+            private_key_pem = private_key_pem.encode("utf-8")
         private_key = serialization.load_pem_private_key(private_key_pem, password=None)
     except Exception:
         return False
@@ -122,3 +134,26 @@ def is_frontend_rsa_oaep_encrypted(password_field: str, private_key_pem: bytes =
             return False
 
     return True
+
+
+# ====================== 5. 检查用户access_token ========================
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+
+async def get_current_user(token: str = Depends(oauth2_scheme)) -> int:
+    try:
+        payload = decode_token(token)
+        # 校验是不是 access token（防止前端拿 refresh token 来冒充）
+        if payload.get("type") != "access":
+            raise ValueError("Invalid type")
+        
+        user_id = payload.get("sub")
+        if user_id is None:
+            raise ValueError("No user id")
+            
+        return int(user_id)  # 返回用户 ID
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="无效的访问令牌",
+            headers={"WWW-Authenticate": "Bearer"},
+        ) from exc

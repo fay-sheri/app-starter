@@ -1,8 +1,7 @@
+// 双token测试http
 import axios from "axios";
-import type { AxiosError } from "axios";
-import { queryClient } from "./query-client";
-import { router } from "./router";
-import { useAuthStore } from "../store/authStore";
+import type { AxiosError, InternalAxiosRequestConfig } from "axios";
+import { TokenExpiredError } from "../Error/auth/AuthError";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -19,17 +18,18 @@ api.interceptors.response.use(
     return response; //不解包了
   },
   (error: AxiosError) => {
-    if (error.response) {
-      console.error("API Error:", error.response.data);
-      if (error.response.status === 401) {
-        console.log("Unauthorized access - redirecting to login.");
-        useAuthStore.getState().logout();
-        queryClient.clear(); //清除所有缓存,或许不太好
-        router.navigate("/auth", { replace: true });
-      }
-    } else if (error.request) {
-      console.error("No response received:", error.request);
+    const config = error.config as InternalAxiosRequestConfig | undefined;
+    // 刷新接口自己 / 已重试过 / 非 401
+    if (
+      !config ||
+      config.url?.includes("/auth/refresh") ||
+      config.skipAuthRefresh ||
+      config.__retried ||
+      error.response?.status !== 401
+    ) {
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
+    // 抛特定错误，把原 config 带出去，通过判断错误判断是否要刷新
+    return Promise.reject(new TokenExpiredError(config));
   },
 );

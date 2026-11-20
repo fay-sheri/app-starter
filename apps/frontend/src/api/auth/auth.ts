@@ -1,5 +1,7 @@
 import { api } from "../../lib/http";
 import { encryptPassword } from "../../utils/rsa";
+import { resetSessionGuard } from "./onSessionDead" //记得新会话恢复,不然401重新失败不会执行
+
 
 const AuthPublicKeyPem = import.meta.env.VITE_AUTH_PUBLIC_KEY_PEM;
 
@@ -27,6 +29,7 @@ export async function loginApi(data: LoginFormValues) {
     password: await encryptPassword(data.password, AuthPublicKeyPem),
   };
   const res = await api.post<LoginResponse>("api/auth/login", playload);
+  resetSessionGuard();
   return res.data;
 }
 
@@ -52,4 +55,15 @@ export async function registerApi(data: RegisterFormValues) {
   };
   const res = await api.post<RegisterResponse>("api/auth/register", playload);
   return res.data;
+}
+
+interface LogoutResponse{
+  code: number;
+  data: null;
+  message: string;
+}
+
+export async function logoutApi() {
+  const res = await api.post<LogoutResponse>("api/auth/logout")
+  return res
 }

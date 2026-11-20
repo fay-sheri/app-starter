@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     DATABASE_URL: str
     RSA_PRIVATE_KEY: str
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
 
 settings = Settings()
