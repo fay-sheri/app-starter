@@ -1,5 +1,5 @@
 import { pool } from "../lib/db.js";
-
+import type { PoolClient } from "pg";
 /**
 CREATE TABLE users (
     id       BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -15,12 +15,32 @@ export interface User {
   created_at: Date; //PG库自动把TIMESTAMPTZ转成JS的Date对象
 }
 
-//Omit排除对象字段类型
+/** Omit排除对象字段类型
+ *  函数测试使用
+ * */
 export async function createUser(
   username: string,
   passwordHash: string,
 ): Promise<Omit<User, "password_hash">> {
   const { rows } = await pool.query(
+    `INSERT INTO users (username, password_hash)
+     VALUES ($1, $2)
+     RETURNING id, username, created_at`,
+    [username, passwordHash],
+  );
+  return rows[0];
+}
+
+export async function insertUser(
+  client: PoolClient,
+  username: string,
+  passwordHash: string,
+) {
+  const { rows } = await client.query<{
+    id: string;
+    username: string;
+    created_at: Date;
+  }>(
     `INSERT INTO users (username, password_hash)
      VALUES ($1, $2)
      RETURNING id, username, created_at`,
