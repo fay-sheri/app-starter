@@ -1,19 +1,13 @@
 import type { Context, Next } from "koa";
-import { LoginSchema } from "../schemas/auth.js";
+import type { LoginInput } from "../schemas/auth.js";
 import * as authService from "../services/authService.js";
 import { AppError } from "../errors/index.js";
 
 export async function login(ctx: Context, next: Next) {
-  const parsed = LoginSchema.safeParse(ctx.request.body);
-  if (!parsed.success) {
-    throw new AppError(
-      422,
-      42202,
-      "参数缺失或格式错误",
-      "请求体参数缺失或格式错误",
-    );
+  if (!ctx.state.validBody) {
+    throw new AppError(500, 500, "没有经过验证的请求体数据");
   }
-  const result = await authService.login(parsed.data);
+  const result = await authService.login(ctx.state.validBody as LoginInput);
   ctx.cookies.set('refresh_token', result.refreshToken, {
     httpOnly: true,                                   // JS 读不到，防 XSS
     secure: process.env.NODE_ENV === 'production',    // 生产只走 HTTPS
