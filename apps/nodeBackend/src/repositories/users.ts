@@ -1,5 +1,5 @@
 import { pool } from "../lib/db.js";
-
+import type { PoolClient } from "pg";
 /**
 CREATE TABLE users (
     id       BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -9,18 +9,34 @@ CREATE TABLE users (
 );
  */
 export interface User {
-  id: number;
+  id: string; //BIGINT使用字符串类型，js的number超过2^53会精度丢失
   username: string;
   password_hash: string;
   created_at: Date; //PG库自动把TIMESTAMPTZ转成JS的Date对象
 }
 
-//Omit排除对象字段类型
+/** Omit排除对象字段类型
+ *  函数测试使用
+ * */
 export async function createUser(
   username: string,
   passwordHash: string,
 ): Promise<Omit<User, "password_hash">> {
   const { rows } = await pool.query(
+    `INSERT INTO users (username, password_hash)
+     VALUES ($1, $2)
+     RETURNING id, username, created_at`,
+    [username, passwordHash],
+  );
+  return rows[0];
+}
+
+export async function insertUser(
+  client: PoolClient,
+  username: string,
+  passwordHash: string,
+) {
+  const { rows } = await client.query<Omit<User, "password_hash">>(
     `INSERT INTO users (username, password_hash)
      VALUES ($1, $2)
      RETURNING id, username, created_at`,
@@ -39,7 +55,7 @@ export async function findUserByUsername(
 }
 
 export async function findUserById(
-  id: number,
+  id: string,
 ): Promise<Omit<User, "password_hash"> | null> {
   const { rows } = await pool.query(
     "SELECT id, username, created_at FROM users WHERE id = $1",
@@ -49,7 +65,7 @@ export async function findUserById(
 }
 
 async function updatePasswordHash(
-  userId: number,
+  userId: string,
   newPasswordHash: string,
 ): Promise<boolean> {
   const { rowCount } = await pool.query(
@@ -59,7 +75,7 @@ async function updatePasswordHash(
   return (rowCount ?? 0) > 0; //rowCount可能是null
 }
 
-async function deleteUser(id: number): Promise<boolean> {
+async function deleteUser(id: string): Promise<boolean> {
   const { rowCount } = await pool.query("DELETE FROM users WHERE id = $1", [
     id,
   ]);

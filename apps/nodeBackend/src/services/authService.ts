@@ -1,9 +1,14 @@
+import { pool } from "../lib/db.js";
 import type { LoginInput } from "../schemas/auth.js";
+
 import { verifyPassword, hashPassword } from "../utils/password.js";
 import { signAccessToken, generateRefreshToken } from "../utils/jwt.js";
 import { decryptRSAPassword } from "../utils/rsa.js";
+
 import * as userRepository from "../repositories/users.js";
 import * as refreshRepository from "../repositories/refresh-token.js";
+import * as profilesRepository from "../repositories/user-profiles.js";
+
 import { AppError } from "../errors/index.js";
 
 export async function login({ username, password }: LoginInput) {
@@ -47,28 +52,43 @@ export async function register({ username, password }: LoginInput) {
   } catch (err) {
     throw new AppError(500, 500, "密码加密失败");
   }
+  const client = await pool.connect();
   try {
-    newUser = await userRepository.createUser(username, passwordHash);
+    await client.query("BEGIN");
+    newUser = await userRepository.insertUser(
+      client,
+      username,
+      passwordHash,
+    );
+    await profilesRepository.insertProfile(
+      client,
+      newUser.id,
+      newUser.username,
+    ); //2个表用户名统一
+    await client.query("COMMIT");
+    return { newUser };
   } catch (err) {
+    await client.query("ROLLBACK");
     throw new AppError(500, 500, "创建用户失败");
+  } finally {
+    client.release();
   }
-  return { newUser };
 }
 
 export async function refresh(refreshToken: string) {
-  const consumed = await refreshRepository.consumeRefreshToken(refreshToken); 
-  if(!consumed){
-    throw new AppError(401, 40102, '登录已失效，请重新登录');
+  const consumed = await refreshRepository.consumeRefreshToken(refreshToken);
+  if (!consumed) {
+    throw new AppError(401, 40102, "登录已失效，请重新登录");
   }
   const user = await userRepository.findUserById(consumed.user_id);
   if (!user) {
-    throw new AppError(401, 40101, '用户不存在');
+    throw new AppError(401, 40101, "用户不存在");
   }
   const newRefreshToken = generateRefreshToken();
   await refreshRepository.saveRefreshToken(user.id, newRefreshToken);
   const newAccessToken = signAccessToken(user.id, user.username);
   return {
     newRefreshToken,
-    newAccessToken
-  }
+    newAccessToken,
+  };
 }
