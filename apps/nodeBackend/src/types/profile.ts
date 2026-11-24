@@ -1,5 +1,5 @@
 export interface UserProfile {
-  user_id: string; // bigint 在 JS 里用 string 更安全
+  user_id: string; //BIGINT使用字符串类型，js的number超过2^53会精度丢失
   name: string;
   role: string | null;
   bio: string | null;

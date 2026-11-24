@@ -18,8 +18,8 @@ CREATE TABLE refresh_tokens (
 */
 
 export interface RefreshTokenRow {
-  id: number;
-  user_id: number;
+  id: string; //BIGINT使用字符串类型，js的number超过2^53会精度丢失
+  user_id: string;
   token_hash: string;
   expires_at: Date; //PG库自动把TIMESTAMPTZ转成JS的Date对象
   created_at: Date;
@@ -27,7 +27,7 @@ export interface RefreshTokenRow {
 }
 
 export async function saveRefreshToken(
-  userId: number,
+  userId: string,
   refreshToken: string,
 ): Promise<void> {
   const tokenHash = hashToken(refreshToken);
@@ -40,7 +40,7 @@ export async function saveRefreshToken(
 
 export async function consumeRefreshToken(
   refreshToken: string,
-): Promise<{ user_id: number } | null> {
+): Promise<{ user_id: string } | null> {
   const tokenHash = hashToken(refreshToken);
   const client = await pool.connect(); //获取连接，记得释放
   await client.query("BEGIN"); //开启事务BEGIN,ROLLBACK,ROLLBACK

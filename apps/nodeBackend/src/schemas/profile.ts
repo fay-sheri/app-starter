@@ -7,6 +7,7 @@ export const updateProfileSchema = z.object({
   avatar: z.string().max(255).nullable().optional(),
   location: z.string().max(128).nullable().optional(),
   extras: z.record(z.string(),z.unknown()).optional(),
+  skills: z.array(z.string().min(1).max(64)).max(20).optional(),
 });
 
 export type updateProfileType = z.infer<typeof updateProfileSchema>
