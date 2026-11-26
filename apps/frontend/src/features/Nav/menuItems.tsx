@@ -46,6 +46,7 @@ export const menuKeyPatterns: { pattern: string; key: string }[] = [
   { pattern: "/auth", key: "/auth" },
   { pattern: "/", key: "/" },
   { pattern: "/menu/user", key: "/menu/user" },
+  { pattern: "/menu/profile", key:"/menu/profile"},
   { pattern: "/menu", key: "/" },
   { pattern: "/user/list", key: "/user/list" },
   { pattern: "/user/:id", key: "/user/list" },
