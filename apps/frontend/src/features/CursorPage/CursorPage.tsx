@@ -28,7 +28,7 @@ export function CurosorPage() {
     observer.observe(el);
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-  
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       {/* 头部文案 */}
@@ -44,8 +44,16 @@ export function CurosorPage() {
         <Button>热门</Button>
         <Button>关注</Button>
       </div>
-      {isLoading && <div className="py-20 text-center"><Spin description={<p>"加载中..."</p>} /></div>}
-      {isError && <div className="py-20 text-center text-red-500">出错：{(error as Error).message}</div>}
+      {isLoading && (
+        <div className="py-20 text-center">
+          <Spin description={<p>"加载中..."</p>} />
+        </div>
+      )}
+      {isError && (
+        <div className="py-20 text-center text-red-500">
+          出错：{(error as Error).message}
+        </div>
+      )}
       {/* 网格 */}
       {works.length === 0 ? (
         <Empty className="py-20" />
@@ -57,7 +65,13 @@ export function CurosorPage() {
                 key={w.id}
                 className="cursor-pointer overflow-hidden rounded-lg border hover:shadow-md transition"
               >
-                <div className="aspect-video bg-gray-100" />
+                <div className="aspect-video w-full overflow-hidden bg-gray-100">
+                  <img
+                    src={w.cover}
+                    alt={w.title}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
                 <div className="p-3">
                   <div className="truncate font-medium">{w.title}</div>
                   <div className="mt-1 text-sm text-gray-400">{w.author}</div>
@@ -67,7 +81,9 @@ export function CurosorPage() {
           </div>
           {/* 底部状态区 */}
           <div className="py-6 text-center">
-            {isFetchingNextPage && <span className="text-gray-400">加载中...</span>}
+            {isFetchingNextPage && (
+              <span className="text-gray-400">加载中...</span>
+            )}
             {!hasNextPage && works.length > 0 && (
               <span className="text-gray-300">没有更多了</span>
             )}
