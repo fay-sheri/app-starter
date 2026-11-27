@@ -92,3 +92,7 @@ export async function refresh(refreshToken: string) {
     newAccessToken,
   };
 }
+
+export async function logout(refreshToken: string) {
+  refreshRepository.revokeRefreshToken(refreshToken);
+}
